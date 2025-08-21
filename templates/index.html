@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Downloader by Levi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🎧 Music Downloader</h1>
+    <p>Télécharge tes sons en 1 clic</p>
+  </header>
+
+  <main>
+    <section class="search-box">
+      <label for="artist">Artiste</label>
+      <input type="text" id="artist" placeholder="Nom de l'Artiste" />
+
+      <label for="title">Titre</label>
+      <input type="text" id="title" placeholder="Titre de la Chanson" />
+
+      <button id="download-btn">Rechercher & Télécharger</button>
+    </section>
+
+    <section class="history">
+      <h2>📂 Téléchargements récents</h2>
+      <ul id="download-list">
+        <li>✅ Krista Marguerite - Lis ta bible</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>⚙️ Paramètres | 🔐 Mentions légales</p>
+    <p>© 2025 Levi Dev</p>
+  </footer>
+</body>
+<script>
+  document.getElementById("download-btn").addEventListener("click", () => {
+    const artist = document.getElementById("artist").value;
+    const title = document.getElementById("title").value;
+
+    fetch("/download", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ artist, title })
+    })
+    .then(response => response.json())
+    .then(data => {
+      const list = document.getElementById("download-list");
+      const li = document.createElement("li");
+      li.textContent = `✅ ${artist} - ${title}`;
+      list.appendChild(li);
+      alert(data.message || data.error);
+    })
+    .catch(error => console.error("Erreur :", error));
+  });
+</script>
+
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Music Downloader</title>
+</head>
+<body>
+  <h1>Panneau d’administration</h1>
+  <ul>
+    {% for file in files %}
+      <li>
+        {{ file }}
+        <button onclick="deleteFile('{{ file }}')">🗑️ Supprimer</button>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <script>
+    function deleteFile(filename) {
+      fetch(`/delete/${filename}`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => alert(data.message || data.error))
+        .then(() => location.reload());
+    }
+  </script>
+</body>
+</html>
