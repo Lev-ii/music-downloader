@@ -52,9 +52,16 @@ def download_music():
     try:
         with yt_dlp.YoutubeDL(options) as ydl:
             ydl.download([f"ytsearch1:{search_query}"])
+    except FileNotFoundError as e:
+        print(f"Erreur de renommage : {e}")
+
+    try:
+        with yt_dlp.YoutubeDL(options) as ydl:
+            ydl.download([f"ytsearch1:{search_query}"])
         return jsonify({'message': f'Téléchargement réussi : {search_query}'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

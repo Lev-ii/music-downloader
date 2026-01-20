@@ -75,6 +75,32 @@ main {
   transform: scale(1.05);
 }
 
+#download-btn:active {
+  transform: scale(0.95);
+}
+
+#spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+
+.spinner-circle {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #4CAF50;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .history {
   margin-top: 2rem;
 }
@@ -95,6 +121,51 @@ main {
   border-radius: 5px;
   box-shadow: 0 0 5px #ca4fff;
 }
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.download-item {
+  animation: fadeInSlide 0.5s ease-out;
+}
+#success-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  animation: fadeInSlide 0.5s ease-out;
+  z-index: 1000;
+}
+
+.hidden {
+  display: none;
+}
+.badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: gold;
+  color: black;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
 
 footer {
   text-align: center;

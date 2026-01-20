@@ -5,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Music Downloader by Levi</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+
 </head>
 <body>
   <header>
     <h1>🎧 Music Downloader</h1>
-    <p>Télécharge tes sons en 1 clic</p>
+    <p>Télécharge tes sons SANS PUB !</p>
   </header>
 
   <main>
@@ -21,6 +24,11 @@
       <input type="text" id="title" placeholder="Titre de la Chanson" />
 
       <button id="download-btn">Rechercher & Télécharger</button>
+      <div id="spinner" style="display:none;">
+        <div class="spinner-circle"></div>
+        <p style="margin-left: 10px;">Téléchargement en cours...</p>
+      </div>
+
     </section>
 
     <section class="history">
@@ -29,34 +37,87 @@
       </ul>
     </section>
   </main>
+  <div id="success-banner" class="hidden">🎉 Téléchargement réussi !</div>
+
 
   <footer>
     <p>⚙️ Paramètres | 🔐 Mentions légales</p>
     <p>© 2025 Levi Dev</p>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </body>
 <script>
-  document.getElementById("download-btn").addEventListener("click", () => {
-    const artist = document.getElementById("artist").value;
-    const title = document.getElementById("title").value;
+const downloadBtn = document.getElementById("download-btn");
+const spinner = document.getElementById("spinner");
+const downloadList = document.getElementById("download-list");
+const successBanner = document.getElementById("success-banner");
 
-    fetch("/download", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ artist, title })
-    })
-    .then(response => response.json())
-    .then(data => {
-      const list = document.getElementById("download-list");
-      const li = document.createElement("li");
-      li.textContent = `✅ ${artist} - ${title}`;
-      list.appendChild(li);
-      alert(data.message || data.error);
-    })
-    .catch(error => console.error("Erreur :", error));
+downloadBtn.addEventListener("click", () => {
+  const artist = document.getElementById("artist").value;
+  const title = document.getElementById("title").value;
+
+  spinner.style.display = "block"; // Affiche le spinner
+
+  fetch("/download", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ artist, title })
+  })
+  .then(response => response.json())
+  .then(data => {
+    spinner.style.display = "none"; // Cache le spinner
+
+    // 🎉 Confettis !
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+
+    // Ajouter à la liste
+    const li = document.createElement("li");
+    li.textContent = `✅ ${artist} - ${title}`;
+    li.classList.add("download-item");
+    downloadList.appendChild(li);
+
+    // Jouer le son
+    const successSound = new Audio("/static/success.mp3");
+    successSound.play();
+
+    // Afficher le toast/banner au lieu de alert
+    successBanner.textContent = `🎵 ${artist} - ${title} téléchargée !`;
+    successBanner.classList.remove("hidden");
+
+    // Disparaît après 3 secondes
+    setTimeout(() => {
+      successBanner.classList.add("hidden");
+    }, 3000);
+
+    // Badge si beaucoup de téléchargements
+    let count = parseInt(localStorage.getItem("downloadCount") || "0");
+    count++;
+    localStorage.setItem("downloadCount", count);
+
+    if (count >= 5 && !document.querySelector(".badge")) {
+      const badge = document.createElement("div");
+      badge.textContent = "🏅 Top Téléchargeur !";
+
+      badge.className = "badge";
+      document.body.appendChild(badge);
+    }
+
+  })
+  .catch(error => {
+    spinner.style.display = "none";
+    console.error("Erreur :", error);
+    // Afficher un toast d'erreur
+    successBanner.textContent = "❌ Erreur lors du téléchargement";
+    successBanner.classList.remove("hidden");
+    setTimeout(() => successBanner.classList.add("hidden"), 3000);
   });
+});
 </script>
+
+
 
 </html>
